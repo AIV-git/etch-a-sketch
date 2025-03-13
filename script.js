@@ -1,20 +1,54 @@
-let dimensions = 16 * 16;
 let gridContainer = document.querySelector(".container");
-
-for (let i = 0; i < dimensions; i++) {
-    let grid = document.createElement("div");
-    grid.innerText = i + 1;
-    gridContainer.appendChild(grid).className = "item";
-    
-    var randomColor = Math.floor(Math.random()*16777215).toString(16)
-    let rgbValue = "#" + randomColor;
-
-    grid.addEventListener("mouseover", (e) => {
-        grid.style.backgroundColor = rgbValue;
-    });
-};
-
-let buttonContainer = document.querySelector(".btn-container");
+let btnContainer = document.querySelector(".btn-container");
 let squaresButton = document.createElement("button");
+let opacity = 0;
+
+function defaultGrid(size) {
+    gridContainer.innerHTML = "";
+    const gridSize = (100/size) + "%";
+
+    for (let i = 0; i < size * size; i++) {
+        let grid = document.createElement("div");
+        grid.classList.add("item");
+        grid.style.flexBasis = gridSize;
+        
+        var randomColor = Math.floor(Math.random()*16777215).toString(16)
+        let rgbValue = "#" + randomColor;
+
+        // Generate random color with increasing opacity as mouse goes over div
+        grid.addEventListener("mouseover", (e) => {
+            opacity += 0.1;
+            grid.style.opacity = opacity;
+            grid.style.backgroundColor = rgbValue;
+        });
+
+        gridContainer.appendChild(grid);
+
+        // Color fades out after mouse leaves div 
+        grid.addEventListener("mouseleave", (e) => {
+            let milliseconds = 2;
+            setTimeout(function(){
+                grid.style.backgroundColor = "white";
+            },milliseconds*1000);
+
+        });
+    }
+}
+
+defaultGrid(16);
+
 squaresButton.textContent = "Grid change";
-buttonContainer.appendChild(squaresButton).className = "btn";
+btnContainer.appendChild(squaresButton);
+
+squaresButton.addEventListener("click", () => {
+    let gridValue = false;
+    while (true) {
+        let newGridValue = Number(prompt("Enter your new grid value: "));
+        if (newGridValue > 0 && newGridValue <= 100) {
+            return defaultGrid(newGridValue);
+            break;
+        } else {
+            alert("Enter a valid grid range.");
+        }
+    }
+});
